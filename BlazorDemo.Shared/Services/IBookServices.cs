@@ -9,9 +9,10 @@ namespace BlazorDemo.Shared.Services
     public interface IBookServices
     {
         Task<List<Book>> GetBooks();
-        Task<Book>GetBookById(int id);
+        Task<ServiceResponse<Book>>GetBookById(string id);
         Task<ServiceResponse<Book>>AddBook(Book model);
-        Task<Book>PutBook(int id, Book model);
-        Task<bool>DeleteBookById(int id);
+        Task<ServiceResponse<Book>>EditBook(string id, Book model);
+        Task<ServiceResponse<Book>>DeleteBookById(string id);
+        Task<ServiceResponse<Book>>UploadBookCover(UploadBook model);
     }
 }

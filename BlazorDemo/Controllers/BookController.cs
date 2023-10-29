@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BlazorDemo.Shared;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,40 +29,42 @@ namespace BlazorDemo.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Book>> GetBookById(int id)
+        public async Task<ActionResult<ServiceResponse<Book>>> GetBookById(string id)
         {
             // TODO: Your code here
             await Task.Yield();
-
-            return null;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Book>>> AddBook(Book model)
-        {
-            // TODO: Your code here
-            await Task.Yield();
-            var result = await _bookService.AddBook(model);
+            var result = await _bookService.GetBookById(id);
 
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> EditBook(int id, Book model)
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<Book>>> AddBook(UploadBook model)
         {
             // TODO: Your code here
             await Task.Yield();
+            var result = await _bookService.AddBook(model.Book!);
+            await _bookService.UploadBookCover(model);
+            return Ok(result);
+        }
 
-            return NoContent();
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<Book>>> EditBook(string id, Book model)
+        {
+            // TODO: Your code here
+            await Task.Yield();
+            var result = await _bookService.EditBook(id, model);
+
+            return Ok(result);
         }
 
         [HttpDelete]
-        public async Task<ActionResult<Book>> DeleteBookById(int id)
+        public async Task<ActionResult<ServiceResponse<Book>>> DeleteBookById(string id)
         {
             // TODO: Your code here
             await Task.Yield();
-
-            return null;
+            var result = await _bookService.DeleteBookById(id);
+            return Ok(result);
         }
     }
 }

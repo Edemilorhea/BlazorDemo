@@ -1,13 +1,14 @@
 global using BlazorDemo.Shared.Model;
 global using BlazorDemo.Shared.Services;
+global using BlazorDemo.Client.Pages;
 using BlazorDemo.Shared.DBData;
 using System.Reflection.Metadata;
-using BlazorDemo.Client.Pages;
 using BlazorDemo.Components;
 using Blazorise;
-using Blazorise.Tailwind;
+using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using NSwag;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,8 +50,13 @@ builder.Services.AddScoped(http => new HttpClient
 builder.Services.AddMongoDB<DataContext>("mongodb://localhost:27017", "Blazor");
 builder.Services.AddScoped<IBookServices, BookServices>();
 
-builder.Services.AddBlazorise()
-    .AddTailwindProviders()
+
+builder.Services
+    .AddBlazorise( options =>
+    {
+        options.Immediate = true;
+    } )
+    .AddBootstrapProviders()
     .AddFontAwesomeIcons();
 
 var app = builder.Build();
@@ -75,6 +81,11 @@ app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapPost("api/[controller]/[action]", async context =>{
+    context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = 100*1024*1024;
+});
+
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

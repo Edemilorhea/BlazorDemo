@@ -8,7 +8,7 @@ namespace BlazorDemo.Shared.DBData;
 
 public class DataContext : DbContext
 {
-    public DbSet<Book> Books { get; set; }
+    public DbSet<Book> Book { get; set; }
 
 
     public DataContext Create(IMongoDatabase database) =>
@@ -24,6 +24,6 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Book>().ToCollection("Books");
+        modelBuilder.Entity<Book>().ToCollection("Book");
     }
 }

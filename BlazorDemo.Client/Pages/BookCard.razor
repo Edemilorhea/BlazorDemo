@@ -1,0 +1,16 @@
+﻿@using System.ComponentModel.DataAnnotations
+        <Card>
+            <CardImage Source=@Source Alt="@Alt"/>
+            <CardBody>
+                <CardTitle>@Title</CardTitle>
+                <CardText>@Text</CardText>
+                <Button Color="Color.Primary">細詳資料</Button>
+            </CardBody>
+        </Card>
+
+@code {
+    [Parameter] [Required] public string? Source { get; set; }
+    [Parameter] [Required] public string? Alt { get; set; }
+    [Parameter] [Required] public string? Title { get; set; }
+    [Parameter] [Required] public string? Text { get; set; }
+}

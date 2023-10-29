@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.Net.Http.Json
+@inject HttpClient Http
+<PageTitle>新增書籍</PageTitle>
+
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <Validations />
+    <div class="form-group">
+        <label for="name">書本名稱:</label>
+        <InputText id="name" class="form-control" @bind-Value="@model.Name" />
+        <ValidationMessage For="@(() => model.Name)" />
+    </div>
+
+    <div class="form-group">
+        <label for="Author">作者:</label>
+        <InputText id="Autohr" class="form-control" @bind-Value="@model.Author" />
+        <ValidationMessage For="@(() => model.Author)" />
+    </div>
+
+    <div class="form-group">
+        <label for="Publisher">出版社:</label>
+        <InputText id="Publisher" class="form-control" @bind-Value="@model.Publisher" />
+        <ValidationMessage For="@(() => model.Publisher)" />
+    </div>
+    <div class="form-group">
+        <label for="Price">價格:</label>
+        <InputNumber id="Price" class="form-control" @bind-Value="@model.Price" />
+        <ValidationMessage For="@(() => model.Price)" />
+    </div>
+    <div class="form-group">
+        <label for="Detail">詳細:</label>
+        <InputTextArea id="Detail" class="form-control" @bind-Value="@model.Detail" />
+        <ValidationMessage For="@(() => model.Detail)" />
+    </div>
+
+    <div class="form-group">
+        <label for="Cover">上傳書本封面:</label>
+        <InputFile id="Cover" class="form-control" OnChange="@OnfileUpload" @bind-Value="@model.Cover" />
+        <ValidationMessage For="@(() => model.Cover)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" >送出</button>
+</EditForm>
+
+
+@code {
+    private Book model = new Book();
+    private byte[]? fileBytes;
+    private string? fileName;
+
+    private async Task OnfileUpload(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var file = e.File;
+            if ( file != null )
+            {
+                using ( MemoryStream result = new MemoryStream() )
+                {
+                    await file!.OpenReadStream( long.MaxValue ).CopyToAsync( result );
+                    fileBytes = result.ToArray();
+                    fileName = file.Name;
+                }
+                @* model.Cover = Convert.ToBase64String( fileBytes ); *@
+                model.ALT = fileName;
+            }
+        }
+        catch ( Exception exc )
+        {
+            Console.WriteLine( exc.Message );
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+
+    void OnWritten( FileWrittenEventArgs e )
+    {
+        Console.WriteLine( $"File: {e.File.Name} Position: {e.Position} Data: {Convert.ToBase64String( e.Data )}" );
+    }
+
+    void OnProgressed( FileProgressedEventArgs e )
+    {
+        Console.WriteLine( $"File: {e.File.Name} Progress: {e.Percentage}" );
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        if(model!= null){
+            Console.WriteLine(model.Cover);
+            Console.WriteLine(model.Name);
+            Console.WriteLine(model.Detail);
+            Console.WriteLine(model.Author);
+            Console.WriteLine(model.Price);
+            Console.WriteLine(model.Publisher);
+            Console.WriteLine(model.ALT);
+        }
+
+        var modelContent = new{
+            book = model,
+            cover = fileBytes,
+            fileName = fileName
+        };
+
+        var response = await Http.PostAsJsonAsync("api/Book/AddBook", modelContent);
+        if(response.IsSuccessStatusCode){
+            Console.WriteLine("新增成功");
+        }
+        else{
+            Console.WriteLine("新增失敗");
+        }
+    }
+
+}
+
+

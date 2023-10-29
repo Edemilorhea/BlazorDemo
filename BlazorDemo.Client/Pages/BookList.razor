@@ -1,0 +1,24 @@
+﻿@page "/BookList"
+<PageTitle>BookList</PageTitle>
+
+<h3>書籍列表</h3>
+
+<Grid>
+    @if(BooksList != null){
+        foreach(Book book in BooksList){
+            <Column ColumnSize="ColumnSize.Is4">
+                <BookCard Source="@book.Cover" Alt="@book.ALT" Title="@book.Name" Text=@book.Detail>
+                </BookCard>
+            </Column>
+        }
+    }
+</Grid>
+
+@code {
+    private List<Book> BooksList { get; set; } = new();
+    [Inject] IBookServices BookServices { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync(){
+        BooksList = await BookServices.GetBooks();
+    }
+}
