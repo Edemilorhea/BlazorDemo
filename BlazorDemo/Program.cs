@@ -9,6 +9,7 @@ using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using NSwag;
 using Microsoft.AspNetCore.Http.Features;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApiDocument( options => {
+builder.Services.AddSwaggerDocument( options => {
     options.PostProcess = document =>
     {
         document.Info =  new OpenApiInfo{
@@ -65,7 +66,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseOpenApi();
-    app.UseSwaggerUi3();
+    app.UseSwaggerUi3(c => 
+        {
+            c.DocumentPath = "/swagger/v1/swagger.json";
+            c.DocExpansion = "list";
+        });
     app.UseReDoc();
     app.UseWebAssemblyDebugging();
 }
