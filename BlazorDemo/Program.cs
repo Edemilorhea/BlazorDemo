@@ -9,6 +9,7 @@ using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using NSwag;
 using Microsoft.AspNetCore.Http.Features;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApiDocument( options => {
+builder.Services.AddSwaggerDocument( options => {
     options.PostProcess = document =>
     {
         document.Info =  new OpenApiInfo{
@@ -65,7 +66,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseOpenApi();
-    app.UseSwaggerUi3();
+    app.UseSwaggerUi3(c => 
+        {
+            c.DocumentPath = "/swagger/v1/swagger.json";
+            c.DocExpansion = "list";
+        });
     app.UseReDoc();
     app.UseWebAssemblyDebugging();
 }
@@ -82,10 +87,9 @@ app.MapControllers();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapPost("api/[controller]/[action]", async context =>{
-    context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = 100*1024*1024;
-});
-
+// app.MapPost("api/[controller]/[action]", async context =>{
+//     context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = 100*1024*1024;
+// });
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
