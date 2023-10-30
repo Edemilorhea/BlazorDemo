@@ -5,7 +5,7 @@ using BlazorDemo.Shared.DBData;
 using System.Reflection.Metadata;
 using BlazorDemo.Components;
 using Blazorise;
-using Blazorise.Bootstrap;
+using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using NSwag;
 using Microsoft.AspNetCore.Http.Features;
@@ -56,7 +56,7 @@ builder.Services
     {
         options.Immediate = true;
     } )
-    .AddBootstrapProviders()
+    .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
 
 var app = builder.Build();
@@ -81,11 +81,6 @@ app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-app.MapPost("api/[controller]/[action]", async context =>{
-    context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = 100*1024*1024;
-});
-
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

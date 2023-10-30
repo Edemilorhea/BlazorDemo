@@ -1,0 +1,19 @@
+@using System.ComponentModel.DataAnnotations;
+
+<Card>
+    <CardBody>
+        <CardTitle>@DetialName</CardTitle>
+        <CardText>@DetialAuthor</CardText>
+        <CardText>@DetialPublisher</CardText>
+        <CardText>@DetialPrice</CardText>
+        <CardText>@DetialText</CardText>
+    </CardBody>
+</Card>
+
+@code{
+    [Parameter] [Required] public string DetialName { get; set; }
+    [Parameter] [Required] public string DetialAuthor { get; set; }
+    [Parameter] [Required] public string DetialPublisher { get; set; }
+    [Parameter] [Required] public int DetialPrice { get; set; }
+    [Parameter] [Required] public string DetialText{ get; set; }
+}

@@ -1,16 +1,44 @@
 ﻿@using System.ComponentModel.DataAnnotations
-        <Card>
-            <CardImage Source=@Source Alt="@Alt"/>
-            <CardBody>
-                <CardTitle>@Title</CardTitle>
-                <CardText>@Text</CardText>
-                <Button Color="Color.Primary">細詳資料</Button>
-            </CardBody>
-        </Card>
+@inject IBookServices BookService
+<div>
+    <Card id="@Id">
+        <CardImage Source=@Source Alt="@Alt"/>
+        <CardBody>
+            <CardTitle Class="Text">@Name</CardTitle>
+            <CardText>@Detial</CardText>
+            <Grid Columns="GridColumns.Are2">
+                <Button Color="Color.Primary" Clicked="@EditBook">細詳資料</Button>
+                <Button Color="Color.Danger" Clicked="@DeleteBook">刪除</Button>
+            </Grid>
+        </CardBody>
+    </Card>
+</div>
 
-@code {
-    [Parameter] [Required] public string? Source { get; set; }
-    [Parameter] [Required] public string? Alt { get; set; }
-    [Parameter] [Required] public string? Title { get; set; }
-    [Parameter] [Required] public string? Text { get; set; }
+<Modal @ref="bookDetailModal">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>詳細資料</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <BookDetail DetialName="@Name" DetialAuthor="@Model.Author" DetialPublisher="@Model.Publisher" DetialPrice="@Price" DetialText="@Detial" ></BookDetail>
+        </ModalBody>
+    </ModalContent>
+</Modal>
+
+@code{
+    [CascadingParameter]
+    public Book Model { get; set; }
+    private Modal bookDetailModal = new();
+
+    public async Task EditBook(){
+        Console.WriteLine(Name);
+        Console.WriteLine(Model.Author);
+        Console.WriteLine(Model.Publisher);
+        Console.WriteLine(Price.ToString());
+        Console.WriteLine(Detial);
+        await bookDetailModal.Show();
+    }
+
+    [Parameter] public EventCallback OnRefresh { get; set; }
 }

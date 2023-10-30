@@ -1,18 +1,51 @@
 ﻿@page "/BookList"
+
 <PageTitle>BookList</PageTitle>
 
 <h3>書籍列表</h3>
 
-<Grid>
+<Grid Class="grid gridRight" Columns="GridColumns.Are2" >
+    <div/>
+    <Button Class="btnFeature btn btn-primary " Size="Size.Medium" Clicked="@AddBook">新增書籍</Button>
+</Grid>
+
+<Grid Class="grid" Columns="GridColumns.Are3" Rows="GridRows.Are2">
     @if(BooksList != null){
         foreach(Book book in BooksList){
-            <Column ColumnSize="ColumnSize.Is4">
-                <BookCard Source="@book.Cover" Alt="@book.ALT" Title="@book.Name" Text=@book.Detail>
-                </BookCard>
-            </Column>
+            <CascadingValue Value="@book">
+            <BookCard OnRefresh="@OnRefresh" Id=@book.Id Source="@book.Cover" Alt="@book.ALT" Name="@book.Name" Detial=@book.Detail />
+            </CascadingValue>
         }
     }
 </Grid>
+
+<Modal @ref="addBookModal">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>新增書籍</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <AddBook OnRefresh="@OnRefresh"></AddBook>
+        </ModalBody>
+    </ModalContent>
+</Modal>
+
+@code{
+    // reference to the modal component
+    private Modal addBookModal = new();
+
+    private Task AddBook()
+    {
+        return addBookModal.Show();
+    }
+
+    private Task HideModal()
+    {
+        return addBookModal.Hide();
+    }
+}
+
 
 @code {
     private List<Book> BooksList { get; set; } = new();
@@ -21,4 +54,32 @@
     protected override async Task OnInitializedAsync(){
         BooksList = await BookServices.GetBooks();
     }
+
+    private async Task LoadBooks()
+    {
+        BooksList = await BookServices.GetBooks();
+        StateHasChanged();
+    }
+    private async Task OnRefresh()
+    {
+        await LoadBooks();
+        Console.WriteLine("Refresh");
+    }
+
 }
+
+<style>
+    .grid {
+        display: grid;
+        gap: 20px;
+        margin-top: 1em;
+    }
+    .gridRight{
+        display: flex;
+        justify-content: end;
+    }
+    .btnFeature{
+        width: 6em;
+        height: auto;
+    }
+</style>

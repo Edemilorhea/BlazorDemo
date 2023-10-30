@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
 @using System.Net.Http.Json
 @inject HttpClient Http
+@attribute [RenderModeInteractiveWebAssembly]
+
 <PageTitle>新增書籍</PageTitle>
 
 <EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
@@ -46,6 +48,8 @@
 
 @code {
     private Book model = new Book();
+
+    [Parameter] public EventCallback OnRefresh { get; set; }
     private byte[]? fileBytes;
     private string? fileName;
 
@@ -109,6 +113,8 @@
         var response = await Http.PostAsJsonAsync("api/Book/AddBook", modelContent);
         if(response.IsSuccessStatusCode){
             Console.WriteLine("新增成功");
+            model = new Book();
+            await OnRefresh.InvokeAsync();
         }
         else{
             Console.WriteLine("新增失敗");

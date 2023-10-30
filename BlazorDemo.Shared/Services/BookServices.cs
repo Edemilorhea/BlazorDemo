@@ -14,6 +14,7 @@ public class BookServices : IBookServices
     public BookServices(DataContext dataContext)
     {
         _dataContext = dataContext;
+        Console.WriteLine(_dataContext);
     }
 
     public async Task<List<Book>> GetBooks()
